@@ -4,8 +4,7 @@ from time import sleep
 sock = socket.socket()
 
 port= int(input("Введите номер порта: "))
-#if 0 <= port <= 65535:
-if type(port) == int:
+if type(port) == int and 0 <= port <= 65535:
     pass
 else:
     port = 9090
