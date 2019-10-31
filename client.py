@@ -4,11 +4,12 @@ from time import sleep
 sock = socket.socket()
 
 port= int(input("Введите номер порта: "))
-if 0 <= port <= 65535:
+#if 0 <= port <= 65535:
+if type(port) == int:
     pass
 else:
     port = 9090
-    
+
 try:
     host = input("Введите имя хоста: ")
     if host == 'localhost':
