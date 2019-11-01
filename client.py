@@ -1,23 +1,48 @@
 import socket
-from time import sleep
+from threading import Thread
 
+def listen(sock):
+    global msg1
+    try:
+        while True:
+            msg1 = sock.recv(1024)
+            msg1 = msg1.decode()
+            print(msg1)
+    except ConnectionAbortedError:
+        pass
+        
+       
 sock = socket.socket()
 
-port= int(input("Введите номер порта: "))
-if type(port) == int and 0 <= port <= 65535:
-    pass
-else:
+
+try:
+    port= input("Введите номер порта: ")
+    if port == '':
+        port = 9090
+    port = int(port)
+    if type(port) == int and 0 <= port <= 65535:
+        pass
+    else:
+        port = 9090
+except ValueError:
     port = 9090
+    print("Введен некорректный порт. По умолчанию - 9090.")
+    
+    
 
 try:
     host = input("Введите имя хоста: ")
-    if host == 'localhost':
+    if host == '':
+        host = 'localhost'
+    elif host == 'localhost':
         pass
     else:
-        if 0 <= int(host) <= 255:
-            pass
-        else:
-            host = 'localhost'
+        host_lst = host.split('.')           
+        for i in host_lst:
+            if 0 <= int(i) <= 255:
+                pass
+            else:
+                host = 'localhost'
 except ValueError:
     host = 'localhost'
     print('Введено некорректное имя хоста. По умолчанию - localhost')
@@ -26,14 +51,26 @@ except ValueError:
 sock.connect((host, port))
 
 print("Введите сообщение.Если хотите завершить работу с сервером, введите exit.")
+
 msg = ""
+msg1 = ""
+t = Thread(target = listen, args = (sock,))
+t.start()
+if "Введите имя: " in msg1:
+    name = input()
+    sock.send(name.encode())
+    
 while True:
     if msg != 'exit':
         msg = input()
         sock.send(msg.encode())
-        data = sock.recv(1024)
     else:
         break
+
+
+    
+
+
 
 sock.close()
 
